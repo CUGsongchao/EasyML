@@ -20,6 +20,18 @@ cv::Mat sigmoid_primer(const cv::Mat &z) {
     return a.mul(1.0f - a);
 }
 
+
+cv::Mat cost_derivation(const cv::Mat &a, const cv::Mat &y, CostFunction type){
+    switch (type) {
+        case MSE:
+            return (a - y);
+        case CEE:
+            return (a - y).mul(1.0f / (a.mul(1.0f - a)));
+        default:
+            return cv::Mat();
+    }
+}
+
 void RandomShuffle(cv::Mat &train_data){
     cv::Mat training_temp = train_data.clone();
     cv::Mat index(1, train_data.rows, CV_32SC1);

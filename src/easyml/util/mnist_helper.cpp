@@ -1,48 +1,17 @@
 //
-// File name: Util.cpp
+// File name: mnist_helper.cpp
 // Created by ronny on 16-7-15.
 // Copyright (c) 2016 SenseNets. All rights reserved.
 //
 
-#include "util/util.h"
-
+#include <easyml/util/util.h>
 #include <fstream>
 #include <glog/logging.h>
 
-cv::Mat sigmoid(const cv::Mat &z) {
-    cv::Mat expon;
-    cv::exp(-z, expon);
-    return 1.0f / (1.0f + expon);
-}
+namespace easyml {
 
-cv::Mat sigmoid_primer(const cv::Mat &z) {
-    cv::Mat a = sigmoid(z);
-    return a.mul(1.0f - a);
-}
+namespace util {
 
-
-cv::Mat cost_derivation(const cv::Mat &a, const cv::Mat &y, CostFunction type){
-    switch (type) {
-        case MSE:
-            return (a - y);
-        case CEE:
-            return (a - y).mul(1.0f / (a.mul(1.0f - a)));
-        default:
-            return cv::Mat();
-    }
-}
-
-void RandomShuffle(cv::Mat &train_data){
-    cv::Mat training_temp = train_data.clone();
-    cv::Mat index(1, train_data.rows, CV_32SC1);
-    for (int i = 0; i < index.cols; i++) {
-        index.at<int>(i) = i;
-    }
-    cv::randShuffle(index);
-    for (int i = 0; i < index.cols; i++) {
-        train_data.row(i) = training_temp.row(index.at<int>(i));
-    }
-}
 //对应int32大小的成员
 static int Transfer(int value)
 {
@@ -98,7 +67,7 @@ static bool LoadLabelsFormFile(const std::string &file, cv::Mat &label) {
     return true;
 }
 
-bool Util::LoadMNIST(const std::string &prefix,
+bool LoadMNIST(const std::string &prefix,
                             cv::Mat &train_data,
                             cv::Mat &test_data) {
  cv::Mat training_images, training_labels;
@@ -139,3 +108,6 @@ bool Util::LoadMNIST(const std::string &prefix,
     return true;
 }
 
+} // namespace util
+
+} // namespace easyml

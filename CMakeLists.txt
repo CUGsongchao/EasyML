@@ -9,6 +9,8 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 option(BUILD_EXAMPLES "building the examples" ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/easyml)
+
 add_subdirectory(src)
 
 if (BUILD_EXAMPLES)

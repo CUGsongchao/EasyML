@@ -36,3 +36,12 @@ I1110 14:55:30.378495 19049 neural_network.cpp:93] Epoch 5: 9439 / 10000
 ...
 ```
 
+
+## 4. TODO
+
+1. Refactor the structure
+2. Add ReLU activation
+3. Add dropout
+4. Add SoftMax layer
+5. Add convolutional layer and pooling layer
+6. Add moment optimation

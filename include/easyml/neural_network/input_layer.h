@@ -41,6 +41,8 @@ public:
             std::vector<cv::Mat> &delta_out,
             float eta,
             float lambda) override;
+
+    void SetLabels(const std::vector<cv::Mat> &labels) { };
 };
 
 } // namespace easyml

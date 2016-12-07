@@ -17,8 +17,7 @@ FullyConnectedLayer::FullyConnectedLayer(const FullyConnectedLayerParameter &par
     cv::randn(weights_, cv::Scalar::all(0.0f), cv::Scalar::all(init_weight));
 
     activation_ = param.activation;
-    input_.assign(param.input_dim.batch_size,
-            cv::Mat(param.input_dim.height, param.input_dim.height, CV_32FC1));
+
 }
 
 
@@ -26,8 +25,7 @@ void FullyConnectedLayer::FeedForward(
         const std::vector<cv::Mat> &input,
         std::vector<cv::Mat> &output)
 {
-    CHECK_EQ(input_.size(), input.size()) 
-        << "batch size of the input doesn't match with the net.";
+    input_.assign(input.size(), cv::Mat());
 
     int batch_size = input_.size();
     output.assign(batch_size, cv::Mat());
@@ -50,13 +48,15 @@ void FullyConnectedLayer::BackPropagation(
     cv::Mat nabla_b_sum(biases_.size(), CV_32FC1, cv::Scalar(0.0f));
 
     int batch_size = input_.size();
+    delta_out.assign(batch_size, cv::Mat());
 
     for (int i = 0; i < batch_size; i++) {
-        delta_out[i] = (weights_.t() * delta_in[i]).mul(activation_->primer(weighted_output_[i]));
+        delta_out[i] = delta_in[i].mul(activation_->primer(weighted_output_[i]));
         cv::Mat nabla_b = delta_out[i].clone();
-        cv::Mat nabla_w = nabla_b * input_[i];
+        cv::Mat nabla_w = nabla_b * input_[i].t();
         nabla_w_sum += nabla_w;
         nabla_b_sum += nabla_b;
+        delta_out[i] = weights_.t() * delta_out[i];
     }
     weights_ *= (1 - eta * lambda); // L2 regularization
     weights_ -= (eta / batch_size) * nabla_w_sum;

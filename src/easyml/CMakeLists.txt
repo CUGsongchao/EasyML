@@ -1,4 +1,4 @@
-find_package(OpenCV REQUIRED COMPONENTS core imgproc)
+find_package(OpenCV REQUIRED COMPONENTS core highgui imgproc)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 find_package(Glog REQUIRED)

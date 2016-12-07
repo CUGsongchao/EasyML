@@ -16,7 +16,13 @@ namespace easyml {
 namespace util {
 
 void RandomShuffle(cv::Mat &train_data, cv::Mat &labels);
-bool LoadMNIST(const std::string &prefix, cv::Mat &train_data, cv::Mat &test_data);
+
+bool LoadMNIST(const std::string &prefix,
+               cv::Mat &train_data,
+               cv::Mat &train_labels,
+               cv::Mat &test_data,
+               cv::Mat &test_labels
+);
 
 } // namepsace util
 } // namespace easyml

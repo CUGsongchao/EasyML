@@ -28,7 +28,8 @@ public:
     void PushFront(std::shared_ptr<Layer> layer);
     void Insert(std::shared_ptr<Layer> layer, int index);
     void Remove(int index);
-    void Train(const cv::Mat &training_set, const cv::Mat &lables, NNTrainParam param);
+    void Train(const cv::Mat &training_set, const cv::Mat &lables, NNTrainParam param,
+               const cv::Mat &testing_set = cv::Mat(), const cv::Mat &testing_label = cv::Mat());
     void Predict(const cv::Mat &input, cv::Mat &output);
 private:
     void UpdateMiniBatch(

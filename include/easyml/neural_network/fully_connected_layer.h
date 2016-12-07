@@ -51,6 +51,7 @@ public:
             float eta,
             float lambda) override;
 
+    void SetLabels(const std::vector<cv::Mat> &labels) { };
 };
 
 

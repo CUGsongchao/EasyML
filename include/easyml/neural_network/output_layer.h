@@ -40,8 +40,7 @@ class OutputLayer : public Layer
 public:
 
     explicit OutputLayer(
-            const OutputLayerParameter &param,
-            const cv::Mat &labels);
+            const OutputLayerParameter &param);
 
     /// @brief forward computation
     void FeedForward(
@@ -55,6 +54,8 @@ public:
             std::vector<cv::Mat> &delta_out,
             float eta,
             float lambda) override;
+
+    void SetLabels(const std::vector<cv::Mat> &labels) override;
 private:
     std::shared_ptr<util::CostFunction> cost_;
     std::vector<cv::Mat> labels_;

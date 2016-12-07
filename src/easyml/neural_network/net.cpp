@@ -3,14 +3,16 @@
 // Created by ronny on 16-12-2.
 //
 
+#include <glog/logging.h>
 #include <easyml/neural_network/net.h>
-#include <vector>
 #include <easyml/util/util.h>
+#include <iostream>
 
 namespace easyml {
 namespace nn {
 
-void Net::Train(const cv::Mat &training_set, const cv::Mat &label_set, NNTrainParam param)
+void Net::Train(const cv::Mat &training_set, const cv::Mat &label_set, NNTrainParam param,
+    const cv::Mat &testing_set, const cv::Mat &testing_label)
 {
     cv::Mat training_data = training_set.clone();
     cv::Mat labels = label_set.clone();
@@ -19,7 +21,6 @@ void Net::Train(const cv::Mat &training_set, const cv::Mat &label_set, NNTrainPa
     for (int i = 0; i < param.epochs; i++) {
         // sampling randomly from the training data
         util::RandomShuffle(training_data, labels);
-
         for (int k = 0; k < training_data.rows; k = k + param.mini_batch_size) {
             int stop_row = std::min(k + param.mini_batch_size, training_data.rows);
             std::vector<cv::Mat> input;
@@ -32,6 +33,23 @@ void Net::Train(const cv::Mat &training_set, const cv::Mat &label_set, NNTrainPa
             UpdateMiniBatch(input, target, param.eta, param.lambda / training_set.rows);
         }
 
+        if (testing_set.data) {
+            int accuracy = 0;
+            cv::Mat predict;
+            Predict(testing_set, predict);
+            for (int i = 0; i < predict.rows; i++) {
+                cv::Point pos1;
+                cv::minMaxLoc(predict.row(i), nullptr, nullptr, nullptr, &pos1);
+                cv::Point pos2;
+                cv::minMaxLoc(testing_label.row(i), nullptr, nullptr, nullptr, &pos2);
+                accuracy += (pos1.x == pos2.x);
+            }
+            LOG(INFO) << "Epoch " << i << ": " << accuracy
+                      << " / " << testing_set.rows << std::endl;
+        }
+        else {
+            LOG(INFO) << "Epoch " << i << ": completed!" << std::endl;
+        }
     }
 }
 
@@ -93,6 +111,7 @@ void Net::UpdateMiniBatch(
         layers_[i]->FeedForward(input, output);
         input = output;
     }
+    layers_[num_layer - 1]->SetLabels(labels);
 
     // backpropagation through the network
     // the delta in the last layer will compute in the output layer.

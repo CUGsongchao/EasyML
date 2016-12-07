@@ -59,7 +59,15 @@ public:
             float eta,
             float lambda) = 0;
 
+    // only for output layer
+    virtual void SetLabels(const std::vector<cv::Mat> &labels) = 0;
+
     virtual ~Layer() = default;
+
+    std::string Name()
+    {
+        return name_;
+    }
     
 
 protected:

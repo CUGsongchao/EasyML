@@ -68,9 +68,11 @@ static bool LoadLabelsFormFile(const std::string &file, cv::Mat &label) {
 }
 
 bool LoadMNIST(const std::string &prefix,
-                            cv::Mat &train_data,
-                            cv::Mat &test_data) {
- cv::Mat training_images, training_labels;
+               cv::Mat &training_images,
+               cv::Mat &train_labels,
+               cv::Mat &testing_images,
+               cv::Mat &test_labels) {
+ cv::Mat training_labels;
     if (!LoadImagesFormFile(prefix + "/train-images-idx3-ubyte", training_images)) {
         LOG(ERROR) << "Failed to load training data." << std::endl;
         return false;
@@ -83,11 +85,12 @@ bool LoadMNIST(const std::string &prefix,
         LOG(ERROR) << "the number of training data doesn't match with the label." << std::endl;
         return false;
     }
-    train_data.create(training_images.rows, training_images.cols + 1, training_images.type());
-    training_images.copyTo(train_data.colRange(0, train_data.cols - 1));
-    training_labels.copyTo(train_data.col(train_data.cols - 1));
+    train_labels = cv::Mat::zeros(training_labels.rows, 10, CV_8U);
+    for (int i = 0; i < train_labels.rows; i++) {
+        train_labels.at<uchar>(i, training_labels.at<uchar>(i,0)) = 1;
+    }
 
-    cv::Mat testing_images, testing_labels;
+    cv::Mat testing_labels;
     if (!LoadImagesFormFile(prefix + "/t10k-images-idx3-ubyte", testing_images)) {
         LOG(ERROR) << "Failed to load testing data." << std::endl;
         return false;
@@ -101,10 +104,10 @@ bool LoadMNIST(const std::string &prefix,
         LOG(ERROR) << "the number of testing data doesn't match with the label." << std::endl;
         return false;
     }
-    test_data.create(testing_images.rows, testing_images.cols + 1, testing_images.type());
-    testing_images.copyTo(test_data.colRange(0, test_data.cols - 1));
-    testing_labels.copyTo(test_data.col(test_data.cols - 1));
-
+    test_labels = cv::Mat::zeros(testing_labels.rows, 10, CV_8U);
+    for (int i = 0; i < test_labels.rows; i++) {
+        test_labels.at<uchar>(i, testing_labels.at<uchar>(i,0)) = 1;
+    }
     return true;
 }
 
